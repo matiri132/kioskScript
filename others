@@ -10,3 +10,6 @@
 
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/rc.local
 sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/rc.local
+
+
+https://raspberrytips.com/upgrade-raspbian-lite-to-desktop/

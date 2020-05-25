@@ -8,6 +8,7 @@ def index():
         <a href="/hello">Go to hello world</a>
     """
 
+@app.route("/hello")
 def hello():
     return "<h1 style='color:blue'>Hello There!</h1>"
 
