@@ -11,6 +11,7 @@ WD=$(pwd)
 #Preparing config files
 sed -i "s/HOSTNAME/${HOST_NAME}/g" ${WD}/ssidapp.py
 
+sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidappini
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
 
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
@@ -32,7 +33,7 @@ echo "INSTALLING DEPENDENCIES..."
 #Python dep
 if [ ! -x "$(command -v python3)" ]; then
 	echo "Installing Python3..."
-	sudo apt install python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools python3-venv
+	sudo apt install python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools python3-venv 
 fi
 #Nginx dep
 if [ ! -x "$(command -v nginx))" ]; then
@@ -40,40 +41,43 @@ if [ ! -x "$(command -v nginx))" ]; then
 	sudo apt install nginx
 fi
 
+echo "INSTALL Python PACKAGES..."
+pip install wheel uwsgi flask
 
-echo "SETUP VIRTUAL ENV..."
-#Set up an AppDir and VirtualEnv
+echo "SETUP FLASK APP..."
 if [[ ! -d ${APPDIR} ]]
 then
 	mkdir ${APPDIR}
+	sudo chown www-data ${APPDIR}
 fi
 
+cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
+
 #Set virtualenv
-python3 -m venv ${APPDIR}/${VENV_NAME}
+#python3 -m venv ${APPDIR}/${VENV_NAME}
 #Activate the virtual environment
-source ${APPDIR}/${VENV_NAME}/bin/activate
+#source ${APPDIR}/${VENV_NAME}/bin/activate
 #Now you are on the virtual env -> deactivate to quit
 #installing uwsgi on the virtual environment
-pip install wheel
-pip install uwsgi flask
-deactivate
+#pip install wheel uwsgi flask
+#deactivate
 
 #Install application
 cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
-cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
-cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
+#cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
+#cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
 
 #Creating SERVICE
-sudo cp ${WD}/ssidservice /etc/systemd/system/${APPNAME}.service
-sudo systemctl start ${APPNAME}
-sudo systemctl enable ${APPNAME}
+#sudo cp ${WD}/ssidservice /etc/systemd/system/${APPNAME}.service
+#sudo systemctl start ${APPNAME}
+#sudo systemctl enable ${APPNAME}
 
 #Configure NGINX
-sudo cp ${WD}/ssidnginx /etc/nginx/sites-available/${APPNAME}
-sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled
-sudo systemctl restart nginx
-if [ ! -x "$(command -v ufw))" ]; then
-	echo "Configure firewall..."
-	sudo ufw allow 'Nginx Full'
-fi
+#sudo cp ${WD}/ssidnginx /etc/nginx/sites-available/${APPNAME}
+#sudo ln -s /etc/nginx/sites-available/${MYAPP} /etc/nginx/sites-enabled
+#sudo systemctl restart nginx
+#if [ -x "$(command -v ufw))" ]; then
+#	echo "Configure firewall..."
+	#sudo ufw allow 'Nginx Full'
+#fi
 
