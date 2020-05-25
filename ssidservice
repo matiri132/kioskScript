@@ -6,8 +6,8 @@ After=network.target
 User=USER
 Group=www-data
 WorkingDirectory=APPDIR
-Environment="PATH=VENVPATH/bin"
-ExecStart=VENVPATH/bin/uwsgi --ini APPNAME.ini
+Environment="PATH=APPDIR/VENVNAME/bin"
+ExecStart=APPDIR/VENVNAME/bin/uwsgi --ini APPNAME.ini
 
 
 [Install]

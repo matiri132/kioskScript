@@ -4,7 +4,6 @@ APPDIR="/home/$USER/webapps"
 APPNAME='myapp'
 HOST_NAME='localhost'
 VENV_NAME='appVenv'
-ENV_PATH="${APPDIR}/${VENV_NAME}"
 WD=$(pwd)
 
 #Preparing config files
@@ -13,9 +12,9 @@ sed -i "s/HOSTNAME/${HOST_NAME}/g" ${WD}/ssidapp.py
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
 
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
-sed -i "s/USER/$USER/g" ${WD}/ssidservice
 sed -i "s/APPDIR/${APPDIR}/g" ${WD}/ssidservice
-sed -i "s/VENVPATH/${ENV_PATH}/g" ${WD}/ssidservice
+sed -i "s/USER/$USER/g" ${WD}/ssidservice
+sed -i "s/VENVNAME/${VENV_NAME}/g" ${WD}/ssidservice
 
 #sed -i "s/USER/$USER/g" ${WD}/appSv
 #sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
