@@ -6,12 +6,12 @@ SV_NAME='localhost'
 WD=$(pwd)
 
 #Preparing config files
-sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
-sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
-sed -i "s/USER/$USER/g" ${WD}/wsgiConf
-sed -i "s/USER/$USER/g" ${WD}/appSv
-sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
-sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
+#sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
+#sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
+#sed -i "s/USER/$USER/g" ${WD}/wsgiConf
+#sed -i "s/USER/$USER/g" ${WD}/appSv
+#sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
+#sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
 
 
 echo "INSTALLING DEPENDENCIES..."
@@ -35,9 +35,8 @@ then
 	mkdir ${APPDIR}
 fi
 
-cd ${APPDIR}
 #Set virtualenv
-virtualenv appenv
+python3 -m venv ${APPDIR}/appVenv
 #Activate the virtual environment
 source appenv/bin/activate
 #Now you are on the virtual env -> deactivate to quit
