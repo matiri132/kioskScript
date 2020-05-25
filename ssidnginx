@@ -1,9 +1,12 @@
 server {
-    listen 80;
-    server_name SERVERNAME DOMAINNAME;
-    
-    location / {
-        include uwsgi_params;
-        uwsgi_pass unix:APPDIR/APPNAME.sock;
-    }
+	listen 80;
+	server_name localhost;
+
+	location / { 
+		try_files $uri @app; 
+		}
+	location @app {
+	 	include uwsgi_params;
+		uwsgi_pass unix:/tmp/APPNAME.sock;
+	}
 }

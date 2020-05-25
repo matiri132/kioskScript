@@ -14,14 +14,16 @@ sed -i "s/HOSTNAME/${HOST_NAME}/g" ${WD}/ssidapp.py
 sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidappini
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
 
-sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
+sed -i "s/APPNAME/${APPNAME}/g" ${WD}/rc.local
 sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidservice
-sed -i "s/USER/$USER/g" ${WD}/ssidservice
-sed -i "s/VENVNAME/${VENV_NAME}/g" ${WD}/ssidservice
+#sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
+#sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidservice
+#sed -i "s/USER/$USER/g" ${WD}/ssidservice
+#sed -i "s/VENVNAME/${VENV_NAME}/g" ${WD}/ssidservice
 
-sed -i "s/SERVERNAME/${SERVERNAME}/g" ${WD}/ssidnginx
-sed -i "s/DOMAINNAME/${DOMAINNAME}/g" ${WD}/ssidnginx
-sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidnginx
+#sed -i "s/SERVERNAME/${SERVERNAME}/g" ${WD}/ssidnginx
+#sed -i "s/DOMAINNAME/${DOMAINNAME}/g" ${WD}/ssidnginx
+#sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidnginx
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidnginx
 
 #sed -i "s/USER/$USER/g" ${WD}/appSv
@@ -42,7 +44,8 @@ if [ ! -x "$(command -v nginx))" ]; then
 fi
 
 echo "INSTALL Python PACKAGES..."
-pip install wheel uwsgi flask
+sudo pip install wheel flask
+sudo pip install uwsgi
 
 echo "SETUP FLASK APP..."
 if [[ ! -d ${APPDIR} ]]
@@ -51,7 +54,7 @@ then
 	sudo chown www-data ${APPDIR}
 fi
 
-cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
+sudo cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
 
 #Set virtualenv
 #python3 -m venv ${APPDIR}/${VENV_NAME}
@@ -63,7 +66,7 @@ cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
 #deactivate
 
 #Install application
-cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
+sudo cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
 #cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
 #cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
 
@@ -73,9 +76,10 @@ cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
 #sudo systemctl enable ${APPNAME}
 
 #Configure NGINX
-#sudo cp ${WD}/ssidnginx /etc/nginx/sites-available/${APPNAME}
-#sudo ln -s /etc/nginx/sites-available/${MYAPP} /etc/nginx/sites-enabled
-#sudo systemctl restart nginx
+sudo rm /etc/nginx/sites-enabled/default
+sudo cp ${WD}/ssidnginx /etc/nginx/sites-available/${APPNAME}
+sudo ln -s /etc/nginx/sites-available/${MYAPP} /etc/nginx/sites-enabled
+sudo systemctl restart nginx
 #if [ -x "$(command -v ufw))" ]; then
 #	echo "Configure firewall..."
 	#sudo ufw allow 'Nginx Full'
