@@ -38,7 +38,7 @@ fi
 #Set virtualenv
 python3 -m venv ${APPDIR}/appVenv
 #Activate the virtual environment
-source ${APPDIR}/appenv/bin/activate
+source ${APPDIR}/appVenv/bin/activate
 #Now you are on the virtual env -> deactivate to quit
 #installing uwsgi on the virtual environment
 pip install wheel
