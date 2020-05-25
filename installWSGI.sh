@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "SETING VARS..."
-APPDIR='webapps'
+APPDIR="/home/$USER/webapps"
 APPNAME='myapp'
 SV_NAME='localhost'
 WD=$(pwd)
@@ -8,7 +8,7 @@ WD=$(pwd)
 #Preparing config files
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
-sed -i "s/USER/${USER}/g" ${WD}/wsgiConf
+sed -i "s/USER/$USER/g" ${WD}/wsgiConf
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
 sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
@@ -31,11 +31,11 @@ sudo pip install virtualenv
 
 echo "SETUP VIRTUAL ENV..."
 #Set up an AppDir and VirtualEnv
-if [ ! -d "~/${APPDIR}" ]; then
-	mkdir ~/${APPDIR}
+if [ ! -d ${APPDIR} ]; then
+	mkdir ${APPDIR}
 fi
 
-cd ~/${APPDIR}
+cd ${APPDIR}
 #Set virtualenv
 virtualenv appenv
 #Activate the virtual environment
@@ -56,5 +56,5 @@ sudo cp ${WD}/appSv /etc/nginx/sites-available/${APPNAME}
 sudo ln -s /etc/nginx/sites-available/${APPNAME} /etc/nginx/sites-enabled
 
 sudo service nginx restart
-sudo start ${APPNAME}
+
 
