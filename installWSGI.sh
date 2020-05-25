@@ -9,7 +9,7 @@ WD=$(pwd)
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
 sed -i "s/USER/$USER/g" ${WD}/wsgiConf
-sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
+sed -i "s/USER/$USER/g" ${WD}/appSv
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
 sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
 
@@ -22,7 +22,7 @@ if [ ! -x "$(command -v python3)" ]; then
 	sudo apt install python-dev python-pip
 fi
 #Nginx dep
-if [ ! -x "$(command -v n))" ]; then
+if [ ! -x "$(command -v nginx))" ]; then
 	echo "Installing NGINX..."
 	sudo apt install nginx
 fi
@@ -31,7 +31,8 @@ sudo pip install virtualenv
 
 echo "SETUP VIRTUAL ENV..."
 #Set up an AppDir and VirtualEnv
-if [ ! -d ${APPDIR} ]; then
+if [[ ! -d ${APPDIR} ]]
+then
 	mkdir ${APPDIR}
 fi
 
@@ -47,10 +48,15 @@ deactivate
 
 echo "WSGI CONFIGURATION..."
 #Config files
-cp ${WD}/wsgiIni ~/${APPDIR}/${APPNAME}.ini
+cp ${WD}/wsgiIni ${APPDIR}/${APPNAME}.ini
+
+if [[ ! -d /etc/init ]]
+then
+	sudo mkdir /etc/init
+fi
 sudo cp ${WD}/wsgiConf /etc/init/${APPNAME}.conf
 #Python script
-cp ${WD}/wsgi.py ~/${APPNAME}/wsgi.py
+cp ${WD}/wsgi.py ${APPDIR}/${APPNAME}/wsgi.py
 
 sudo cp ${WD}/appSv /etc/nginx/sites-available/${APPNAME}
 sudo ln -s /etc/nginx/sites-available/${APPNAME} /etc/nginx/sites-enabled

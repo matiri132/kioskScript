@@ -7,7 +7,7 @@ setuid USER
 setgid www-data
 
 script
-    cd /home/USER/myappss
+    cd /home/USER/MYAPP
     . appenv/bin/activate
     uwsgi --ini MYAPP.ini
 end script
