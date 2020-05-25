@@ -2,29 +2,32 @@
 echo "SETING VARS..."
 APPDIR='webapps'
 APPNAME='myapp'
+SV_NAME='localhost'
 WD=$(pwd)
 
 #Preparing config files
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
 sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
 sed -i "s/USER/${USER}/g" ${WD}/wsgiConf
+sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
+sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
+sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
+
 
 echo "INSTALLING DEPENDENCIES..."
 #Install dependencies
-##sudo apt update
 #Python dep
 if [ ! -x "$(command -v python3)" ]; then
 	echo "Installing Python3..."
 	sudo apt install python-dev python-pip
 fi
-
+#Nginx dep
 if [ ! -x "$(command -v n))" ]; then
 	echo "Installing NGINX..."
-	sudo apt install python-dev python-pip
+	sudo apt install nginx
 fi
-##sudo pip install virtualenv
-#Nginx dep
-##sudo apt install nginx
+
+sudo pip install virtualenv
 
 echo "SETUP VIRTUAL ENV..."
 #Set up an AppDir and VirtualEnv
@@ -39,13 +42,19 @@ virtualenv appenv
 source appenv/bin/activate
 #Now you are on the virtual env -> deactivate to quit
 #installing uwsgi on the virtual environment
-#pip install uwsgi
+pip install uwsgi
 deactivate
 
 echo "WSGI CONFIGURATION..."
-#touch ~/${APPDIR}/${APPNAME}.ini
-#sudo touch /etc/init/${APPNAME}.conf
-#cat wsgiIni >> ~/${APPDIR}/${APPNAME}.ini
-#sudo cat wsgiConf >> /etc/init/${APPNAME}.conf
+#Config files
 cp ${WD}/wsgiIni ~/${APPDIR}/${APPNAME}.ini
 sudo cp ${WD}/wsgiConf /etc/init/${APPNAME}.conf
+#Python script
+cp ${WD}/wsgi.py ~/${APPNAME}/wsgi.py
+
+sudo cp ${WD}/appSv /etc/nginx/sites-available/${APPNAME}
+sudo ln -s /etc/nginx/sites-available/${APPNAME} /etc/nginx/sites-enabled
+
+sudo service nginx restart
+sudo start ${APPNAME}
+
