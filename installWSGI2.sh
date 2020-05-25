@@ -12,7 +12,7 @@ sed -i "s/HOSTNAME/${HOST_NAME}/g" ${WD}/ssidapp.py
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
 
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
-sed -i "s/APPDIR/${APPDIR}/g" ${WD}/ssidservice
+sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidservice
 sed -i "s/USER/$USER/g" ${WD}/ssidservice
 sed -i "s/VENVNAME/${VENV_NAME}/g" ${WD}/ssidservice
 
