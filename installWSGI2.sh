@@ -2,16 +2,23 @@
 echo "SETING VARS..."
 APPDIR="/home/$USER/webapps"
 APPNAME='myapp'
-SV_NAME='localhost'
+HOST_NAME='localhost'
+VENV_NAME='appVenv'
+ENV_PATH="${APPDIR}/${VENV_NAME}"
 WD=$(pwd)
 
 #Preparing config files
-#sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiIni
-#sed -i "s/MYAPP/${APPNAME}/g" ${WD}/wsgiConf
-#sed -i "s/USER/$USER/g" ${WD}/wsgiConf
+sed -i "s/HOSTNAME/${HOST_NAME}/g" ${WD}/ssidapp.py
+
+sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
+
+sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
+sed -i "s/USER/$USER/g" ${WD}/ssidservice
+sed -i "s/APPDIR/${APPDIR}/g" ${WD}/ssidservice
+sed -i "s/VENVPATH/${ENV_PATH}/g" ${WD}/ssidservice
+
 #sed -i "s/USER/$USER/g" ${WD}/appSv
 #sed -i "s/MYAPP/${APPNAME}/g" ${WD}/appSv
-#sed -i "s/SERVERNAME/${SV_NAME}/g" ${WD}/appSv
 
 
 echo "INSTALLING DEPENDENCIES..."
@@ -36,17 +43,21 @@ then
 fi
 
 #Set virtualenv
-python3 -m venv ${APPDIR}/appVenv
+python3 -m venv ${APPDIR}/${VENV_NAME}
 #Activate the virtual environment
-source ${APPDIR}/appVenv/bin/activate
+source ${APPDIR}/${VENV_NAME}/bin/activate
 #Now you are on the virtual env -> deactivate to quit
 #installing uwsgi on the virtual environment
 pip install wheel
 pip install uwsgi flask
 deactivate
 
+sudo cp ${WD}/ssidservice /etc/systemd/system/${APPNAME}.service
+cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
 cp ${WD}/ssidapp.py ${APPDIR}/ssidapp.py
 cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
 
+sudo systemctl start ${APPNAME}
+sudo systemctl enable ${APPNAME}
 
 

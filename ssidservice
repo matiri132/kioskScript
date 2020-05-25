@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI instance to serve web ssid changer (ssidapp)
+After=network.target
+
+[Service]
+User=USER
+Group=www-data
+WorkingDirectory=APPDIR
+Environment="PATH=VENVPATH/bin"
+ExecStart=VENVPATH/bin/uwsgi --ini APPNAME.ini
+
+
+[Install]
+WantedBy=multi-user.target
