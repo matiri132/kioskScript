@@ -1,0 +1,12 @@
+#Set virtualenv
+#python3 -m venv ${APPDIR}/${VENV_NAME}
+#Activate the virtual environment
+#source ${APPDIR}/${VENV_NAME}/bin/activate
+#Now you are on the virtual env -> deactivate to quit
+#installing uwsgi on the virtual environment
+#pip install wheel uwsgi flask
+#deactivate
+
+
+sed -i "s/APPNAME/${APPNAME}/g" ${WD}/rc.local
+sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/rc.local
