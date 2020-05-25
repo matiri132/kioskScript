@@ -4,7 +4,7 @@ server {
     
     location / {
         include         uwsgi_params;
-        uwsgi_pass      unix:/home/USER/MYAPP/MYAPP.sock;
+        uwsgi_pass      unix:/tmp/MYAPP.sock;
     }
 }
 

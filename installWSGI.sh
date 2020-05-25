@@ -56,7 +56,7 @@ then
 fi
 sudo cp ${WD}/wsgiConf /etc/init/${APPNAME}.conf
 #Python script
-cp ${WD}/wsgi.py ${APPDIR}/${APPNAME}/wsgi.py
+cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
 
 sudo cp ${WD}/appSv /etc/nginx/sites-available/${APPNAME}
 sudo ln -s /etc/nginx/sites-available/${APPNAME} /etc/nginx/sites-enabled
