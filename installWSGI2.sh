@@ -15,10 +15,11 @@ sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidappini
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidappini
 
 sed -i "s/APPNAME/${APPNAME}/g" ${WD}/rc.local
+sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/rc.local
+
+sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
 sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidservice
-#sed -i "s/APPNAME/${APPNAME}/g" ${WD}/ssidservice
-#sed -i "s/APPDIR/\/home\/$USER\/webapps/g" ${WD}/ssidservice
-#sed -i "s/USER/$USER/g" ${WD}/ssidservice
+sed -i "s/USER/$USER/g" ${WD}/ssidservice
 #sed -i "s/VENVNAME/${VENV_NAME}/g" ${WD}/ssidservice
 
 #sed -i "s/SERVERNAME/${SERVERNAME}/g" ${WD}/ssidnginx
@@ -71,14 +72,14 @@ sudo cp ${WD}/ssidappini ${APPDIR}/${APPNAME}.ini
 #cp ${WD}/wsgi.py ${APPDIR}/wsgi.py
 
 #Creating SERVICE
-#sudo cp ${WD}/ssidservice /etc/systemd/system/${APPNAME}.service
-#sudo systemctl start ${APPNAME}
-#sudo systemctl enable ${APPNAME}
+sudo cp ${WD}/ssidservice /etc/systemd/system/${APPNAME}.service
+sudo systemctl start ${APPNAME}
+sudo systemctl enable ${APPNAME}
 
 #Configure NGINX
 sudo rm /etc/nginx/sites-enabled/default
 sudo cp ${WD}/ssidnginx /etc/nginx/sites-available/${APPNAME}
-sudo ln -s /etc/nginx/sites-available/${MYAPP} /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/${MYAPP} /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
 #if [ -x "$(command -v ufw))" ]; then
 #	echo "Configure firewall..."
