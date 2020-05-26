@@ -1,27 +1,26 @@
-LXDE_P="/etc/xdg/lxsession/LXDE-pi/autostart"
 HOMEPAGE="http://www.youtube.com"
 
 echo "INSTALLING DEPENDENCIES..."
 #Installing graphical interface
-sudo apt install xserver-xorg
+apt install xserver-xorg
 #We will use LXDE
-sudo apt install lxde-core lxappearance
-sudo apt install ligthdm
+apt install lxde-core lxappearance
+apt install lightdm
 #We will install KIOSK en chromium
-sudo apt install chromium-browser
+apt install chromium
 #Install other packages required
-sudo apt install xdotool unclutter x11-xserver-utils
+apt install xdotool unclutter x11-xserver-utils
 
 
 if [ ! -x "$(command -v sed))" ]; then
 	echo "Installing SED..."
-	sudo apt install sed
+	apt install sed
 fi
 
 #Activating graphical interface
 if [ -e /etc/init.d/lightdm ]
 then
-          sudo systemctl set-default graphical.target
+          systemctl set-default graphical.target
           ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
           cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
 [Service]
@@ -42,17 +41,10 @@ EOF
 			exit
 fi
 
+sed -i "s/USER/$USER/g" ${WD}/kiosk.service
+cp ${WD}/kioskScript.sh /home/$USER/kioskScript.sh
 
-echo "lxpanel --profile LXDE-pi" >> "${LXDE_P}"
-echo "@pcmanfm --desktop --profile LXDE-pi" >> "${LXDE_P}"
-#Edit boot graphical configuration
-#Desactivate power managment and blanking screen
-echo "@xscreensaver -no-splash" >> "${LXDE_P}"
-echo "@point-rpi" >> "${LXDE_P}"
-echo "@xset s off" >> "${LXDE_P}"
-echo "@xset -dpms" >> "${LXDE_P}"
-echo "@xset s noblank" >> "${LXDE_P}"
-#Prevent error messages
-echo "@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium/Default/Preferences" >> "${LXDE_P}"
-echo "@chromium --noerrdialogs --kiosk ${HOMEPAGE} --incognito" >> "${LXDE_P} "
+sudo cp ${WD}/ssidservice /etc/systemd/system/kiosk.service
+sudo systemctl start kiosk
+sudo systemctl enable kiosk
 
