@@ -1,4 +1,6 @@
 #!/bin/bash
+HOMEPAGE="http://www.youtube.com"
+
 xset s noblank
 xset s off
 xset -dpm

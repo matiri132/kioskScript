@@ -32,6 +32,11 @@ if [ ! -x "$(command -v nginx))" ]; then
 	echo "Installing NGINX..."
 	sudo apt install nginx
 fi
+#Sed omstaññ
+if [ ! -x "$(command -v sed))" ]; then
+	echo "Installing SED..."
+	sudo apt install sed
+fi
 
 echo "INSTALL Python PACKAGES..."
 sudo pip install wheel flask

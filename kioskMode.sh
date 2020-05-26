@@ -17,7 +17,7 @@ if [ ! -x "$(command -v sed))" ]; then
 	apt install sed
 fi
 
-#Activating graphical interface
+#Activating graphical interface from raspi-config
 if [ -e /etc/init.d/lightdm ]
 then
           systemctl set-default graphical.target
@@ -42,7 +42,8 @@ EOF
 fi
 
 sed -i "s/USER/$USER/g" ${WD}/kiosk.service
-cp ${WD}/kioskScript.sh /home/$USER/kioskScript.sh
+
+cp ${WD}/kiosk.sh /home/$USER/kiosk.sh
 
 sudo cp ${WD}/ssidservice /etc/systemd/system/kiosk.service
 sudo systemctl start kiosk
