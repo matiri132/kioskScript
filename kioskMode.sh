@@ -20,6 +20,21 @@ install_packages (){
 	apt-get autoremove --yes
 }
 
+uninstall_packages (){
+	echo "INSTALLING DEPENDENCIES..."
+	#Installing graphical interface
+	apt-get purge xserver-xorg 
+	apt-get purge xfce4 xfce4-terminal
+	apt-get purge lightdm --yes
+	apt-get purge plymouth plymouth-themes --yes
+	apt-get purge pix-plym-splash --yes
+	#We will install KIOSK en chromium
+	apt-get purge --no-install-recommends chromium-browser  --yes
+	#Install other packages required
+	apt-get clean --yes
+	apt-get autoremove --yes
+}
+
 case $2 in
 	install)
 		#Install required packages
@@ -90,6 +105,24 @@ EOF
 		rm	/etc/systemd/system/multi-user.target.wants/kiosk.service
 		rm /etc/systemd/system/kiosk.service
 		rm /home/${H_USER}/kiosk.sh
+		echo "Setting as Console without Autologin..."
+		systemctl set-default multi-user.target
+        ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+        rm /etc/systemd/system/getty@tty1.service.d/autologin.conf 
+		#Restoring cmdline and config.txt
+		rm -f /boot/cmdline.txt
+		cp ${WD}/files/cmdlinebase /boot/cmdline.txt
+		read -p "¿Do you want to restore default config.txt?(y/n): " answer
+		if [ answer == 'y' ]
+		then
+			rm -f /boot/config.txt
+			cp ${WD}/files/configbase /boot/config.txt
+		fi
+		if [ $3 == 'full' ]
+		then
+			uninstall_packages
+		fi
+		
 	;;
 esac
 
@@ -99,5 +132,6 @@ then
 	echo "USE:"
 	echo "	kioskMode pi install full-> on RPi headless (install graphic mode) "
 	echo "	kioskMode pi install -> if have already downloaded graphic environment"
+	echo "	kioskMode pi uninstall full -> remove service and all installed packages"
 	echo "	kioskMode pi uninstall -> remove service that handle kioskMode"
 fi

@@ -28,10 +28,17 @@ sudo ./kioskMode.sh USER install all
 -if you use instal all the script will install all necesary packages.
 -If you make any changes in the installation file (as kiosk homepage) you only need to use install and reboot.
 
-6. Uninstall (IN DEVELOPMENT):
+6. Reboot system:
 ```
-sudo ./kioskMode.sh USER uninstall
+sudo reboot
+```
+
+
+7. Uninstall (IN DEVELOPMENT):
+```
+sudo ./kioskMode.sh USER uninstall all
 ```
 -USER must be the same user thats run install before.
--RIGTH NOW UNINSTALL ONLY REMOVE THE SERVICE THAT HANDLE KIOSK BUT DONT REVERT TO A HEADLESS LINUX AGAIN, SO CAREFULL!.
+-This function restore all the script work
+-If you use "all" purge all installed packages
 
