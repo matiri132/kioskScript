@@ -7,7 +7,6 @@ install_packages (){
 	echo "INSTALLING DEPENDENCIES..."
 	#Installing graphical interface
 	apt-get install xserver-xorg 
-	#apt-get install x11-xserver-utils xinit --yes
 	apt-get install xfce4 xfce4-terminal
 	apt-get install lightdm --yes
 	apt-get install plymouth plymouth-themes --yes
@@ -16,12 +15,10 @@ install_packages (){
 	apt-get install --no-install-recommends chromium-browser  --yes
 	#Install other packages required
 	apt-get install xdotool unclutter sed --yes
-	apt-get clean --yes
-	apt-get autoremove --yes
 }
 
 uninstall_packages (){
-	echo "INSTALLING DEPENDENCIES..."
+	echo "UNINSTALLING GRAPHIC ENVIRONMENT..."
 	#Installing graphical interface
 	apt-get purge xserver-xorg 
 	apt-get purge xfce4 xfce4-terminal
@@ -29,7 +26,7 @@ uninstall_packages (){
 	apt-get purge plymouth plymouth-themes --yes
 	apt-get purge pix-plym-splash --yes
 	#We will install KIOSK en chromium
-	apt-get purge --no-install-recommends chromium-browser  --yes
+	apt-get purge chromium-browser  --yes
 	#Install other packages required
 	apt-get clean --yes
 	apt-get autoremove --yes
