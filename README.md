@@ -27,6 +27,7 @@ sudo ./kioskMode.sh USER install all
 -Replace USER by your current user (you can create a new one for kiosk).
 -if you use instal all the script will install all necesary packages.
 -If you make any changes in the installation file (as kiosk homepage) you only need to use install and reboot.
+
 6. Uninstall (IN DEVELOPMENT):
 ```
 sudo ./kioskMode.sh USER uninstall
