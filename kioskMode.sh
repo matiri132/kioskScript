@@ -42,27 +42,27 @@ case $2 in
 		#Activating graphical interface from raspi-config
 		if [ -e /etc/init.d/lightdm ]
 		then
-          		systemctl set-default graphical.target
-          		ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
-          		cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+          	systemctl set-default graphical.target
+          	ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+          	cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
 [Service]
 ExecStart=
 ExecStart=-/sbin/agetty --autologin ${H_USER} --noclear %I \$TERM
 EOF
-					sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=${H_USER}/"
-					#Disable Raspi-Config at boot
-					if [ -e /etc/profile.d/raspi-config.sh ]; then
-						rm -f /etc/profile.d/raspi-config.sh
-			    		if [ -e /etc/systemd/system/getty@tty1.service.d/raspi-config-override.conf ]; then
-							rm /etc/systemd/system/getty@tty1.service.d/raspi-config-override.conf
-    					fi
-			    		telinit q
-					fi
-        		else
-					echo "You need to install LigthDM. Run :"
-					echo "	sudo kioskMode.sh pi install full"
-					echo "Change pi if you have another user name (echo \$USER)"
-					exit
+			sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=${H_USER}/"
+			#Disable Raspi-Config at boot
+			if [ -e /etc/profile.d/raspi-config.sh ]; then
+				rm -f /etc/profile.d/raspi-config.sh
+			   	if [ -e /etc/systemd/system/getty@tty1.service.d/raspi-config-override.conf ]; then
+					rm /etc/systemd/system/getty@tty1.service.d/raspi-config-override.conf
+    			fi
+			   	telinit q
+			fi
+        	else
+				echo "You need to install LigthDM. Run :"
+				echo "	sudo kioskMode.sh pi install full"
+				echo "Change pi if you have another user name (echo \$USER)"
+				exit
 		fi
 
 		#Set video preferences
@@ -81,6 +81,7 @@ EOF
 		#Creating service to handle kiosk
 		cp ${WD}/files/kiosk.service ${WD}/kiosk.service
 		sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
+		sed -i "s/ARGS/\ /g" ${WD}/kiosk.service
 		sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
 		cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
 		rm kiosk.service

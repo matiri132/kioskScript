@@ -5,10 +5,13 @@ WD=$(pwd)
 
 install_packages (){
 	echo "INSTALLING DEPENDENCIES..."
+	
 	#Installing graphical interface
-	apt-get install xserver-xorg 
-	apt-get install xfce4 xfce4-terminal
+	apt-get install xserver-xorg --yes
 	apt-get install lightdm --yes
+	apt-get install xfce4 xfce4-terminal --yes
+	apt-get install slim --yes
+	
 	apt-get install plymouth plymouth-themes --yes
 	apt-get install pix-plym-splash --yes
 	#We will install KIOSK en chromium
@@ -28,16 +31,28 @@ case $2 in
 		then
 			install_packages
 		fi
-	
-		#Creating service to handle kiosk
+
+		#"No Desktop"
+		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/"
+		#Set Splash
+		cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
+		cp ${WD}/files/splash.png /home/${H_USER}/images/Pictures/
+		rm -f /usr/share/plymouth/themes/pix/pix.script
+		cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
+		#Creating service to autologin
+		systemctl set-default graphical.target
+		sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=${H_USER}/"
 		cp ${WD}/files/kioskusv.conf ${WD}/kioskusv.conf
 		sed -i "s/USER/${H_USER}/g" ${WD}/kioskusv.conf
-
         mkdir /etc/systemd/system/getty@tty1.service.d/
         cp ${WD}/kioskusv.conf /etc/systemd/system/getty@tty1.service.d/autologin.conf 
         systemctl enable getty@tty1.service
-		
+		#Service to handler kiosk
         cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
+		sed -i "s/ARGS/u/g" ${WD}/kiosk.service
+		sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
+		sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
 		rm kiosk.service
 		cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
 		systemctl start kiosk
@@ -48,8 +63,11 @@ case $2 in
 	;;
 	uninstall)
 		echo "Removing service..."
+		systemctl set-default multi-user.target
 		systemctl stop kiosk
 		systemctl disable kiosk
+		systemctl stop getty@tty1.service
+		systemctl disable getty@tty1.service
 		rm	/etc/systemd/system/multi-user.target.wants/kiosk.service
 		rm /etc/systemd/system/kiosk.service
 		rm /home/${H_USER}/kiosk.sh

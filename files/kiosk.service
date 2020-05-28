@@ -7,7 +7,7 @@ After=graphical.target
 Environment=DISPLAY=:0.0
 Environment=XAUTHORITY=/home/USER/.Xauthority
 Type=simple
-ExecStartPre=/bin/bash /home/USER/kiosk.sh
+ExecStartPre=/bin/bash /home/USER/kiosk.sh ARGS
 ExecStart=/usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk --incognito HOMEPAGE
 Restart=on-abort
 User=USER
