@@ -22,7 +22,6 @@ install_packages (){
 	apt-get autoremove --yes
 }
 	
-}
 
 case $2 in
 	install)
