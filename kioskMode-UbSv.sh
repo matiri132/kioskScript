@@ -7,21 +7,37 @@ install_packages (){
 	echo "INSTALLING DEPENDENCIES..."
 	
 	#Installing graphical interface
-	apt-get install xserver-xorg --yes
-	apt-get install lightdm --yes
-	apt-get install xfce4 xfce4-terminal --yes
-	apt-get install slim --yes
+	apt-get install xserver-xorg -y
+	apt-get install lightdm -y
+	apt-get install xfce4 xfce4-terminal -y
+	apt-get install slim -y
 	
-	apt-get install plymouth plymouth-themes --yes
-	apt-get install pix-plym-splash --yes
+	apt-get install plymouth plymouth-themes -y
+	apt-get install pix-plym-splash -y
 	#We will install KIOSK en chromium
-	apt-get install --no-install-recommends chromium-browser  --yes
+	apt-get install --no-install-recommends chromium-browser  -y
 	#Install other packages required
-	apt-get install xdotool unclutter sed --yes
-	apt-get clean --yes
-	apt-get autoremove --yes
+	apt-get install xdotool unclutter sed -y
+	apt-get clean -y
+	apt-get autoremove -y
 }
-	
+
+
+uninstall_packages (){
+	echo "UNINSTALLING GRAPHIC ENVIRONMENT..."
+	#Installing graphical interface
+	apt-get purge xserver-xorg  -y
+	apt-get purge xfce4 xfce4-terminal -y
+	apt-get purge lightdm -y
+	apt-get purge slim -y
+	apt-get purge plymouth plymouth-themes -y
+	apt-get purge pix-plym-splash -y
+	#We will install KIOSK en chromium
+	apt-get purge chromium-browser  -y
+	#Install other packages required
+	apt-get clean -y
+	apt-get autoremove -y
+}
 
 case $2 in
 	install)
@@ -70,6 +86,10 @@ case $2 in
 		rm	/etc/systemd/system/multi-user.target.wants/kiosk.service
 		rm /etc/systemd/system/kiosk.service
 		rm /home/${H_USER}/kiosk.sh
+		if [ $3 == 'full' ]
+		then
+			uninstall_packages
+		fi
 	;;
 esac
 
