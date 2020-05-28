@@ -64,10 +64,11 @@ case $2 in
         cp ${WD}/kioskusv.conf /etc/systemd/system/getty@tty1.service.d/autologin.conf 
         systemctl enable getty@tty1.service
 		#Service to handler kiosk
-        cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
+		cp ${WD}/files/kiosk.service ${WD}/kiosk.service
 		sed -i "s/ARGS/u/g" ${WD}/kiosk.service
 		sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
 		sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
+		cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
 		rm kiosk.service
 		cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
 		systemctl start kiosk
