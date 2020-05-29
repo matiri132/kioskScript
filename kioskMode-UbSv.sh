@@ -48,30 +48,63 @@ case $2 in
 		fi
 
 		#"No Desktop"
-		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+		if [ -e  /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml ]
+		then 
+    		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+    		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+		else
+			echo "Some steps of the installation will be applied after reboot..."
+		fi
 		#Set Splash
-		cp ${WD}/files/splash.png /usr/share/plymouth/themes/
-		cp ${WD}/files/splash.png /home/${H_USER}/images/Pictures/
-		rm -f /usr/share/plymouth/themes/pix/pix.script
-		cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
+		if [ -d /usr/share/plymouth ]
+		then
+			cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
+			mkdir /home/${H_USER}/.kiosk 
+			rm -f /usr/share/plymouth/themes/pix/pix.script
+			cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
+		else	
+			echo "You need install PLYMOUTH to complete the instalation. Re-run as 'YOUR_USER_NAME install full' see 'help'"
+		fi
 		#Creating service to autologin
+		if [ -e /etc/lightdm/lightdm.conf ]
+		then
+			sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=${H_USER}/"
+		else
+			echo "You need to install ligthdm packages. Use 'install full'... See: 'help' "
+			echo "If you already installed it only re-run  'install' after reboot."
 		systemctl set-default graphical.target
-		sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=${H_USER}/"
-		cp ${WD}/files/kioskusv.conf ${WD}/kioskusv.conf
-		sed -i "s/USER/${H_USER}/g" ${WD}/kioskusv.conf
-        mkdir /etc/systemd/system/getty@tty1.service.d/
-        cp ${WD}/kioskusv.conf /etc/systemd/system/getty@tty1.service.d/autologin.conf 
-        systemctl enable getty@tty1.service
+		
+		if [ -e /etc/systemd/system/getty@tty1.service.d/autologin.conf ]
+		then 
+			systemctl set-default graphical.target
+        	ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+			cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin ${H_USER} --noclear %I \$TERM
+EOF	
+		else
+			cp ${WD}/files/kioskusv.conf ${WD}/kioskusv.conf
+			sed -i "s/USER/${H_USER}/g" ${WD}/kioskusv.conf
+        	mkdir /etc/systemd/system/getty@tty1.service.d/
+        	cp ${WD}/kioskusv.conf /etc/systemd/system/getty@tty1.service.d/autologin.conf 
+        	systemctl enable getty@tty1.service
+		fi
 		#Service to handler kiosk
-		cp ${WD}/files/kiosk.service ${WD}/kiosk.service
-		sed -i "s/ARGS/u/g" ${WD}/kiosk.service
-		sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
-		sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
-		cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
-		rm kiosk.service
-		cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
-		systemctl enable kiosk
+		if [ ! -e /etc/systemd/system/kiosk.service ]
+		then
+			cp ${WD}/files/kiosk.service ${WD}/kiosk.service
+			sed -i "s/ARGS/u/g" ${WD}/kiosk.service
+			sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
+			sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
+			cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
+			rm kiosk.service
+			cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
+			systemctl enable kiosk
+		else
+			echo "Kiosk service already installed, you need to reboot to start kiosk mode..."
+		fi
+		
         usermod -a -G audio ${H_USER}
         usermod -a -G video ${H_USER}
 		
