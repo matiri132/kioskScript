@@ -49,9 +49,9 @@ case $2 in
 
 		#"No Desktop"
 		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/"
+		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 		#Set Splash
-		cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
+		cp ${WD}/files/splash.png /usr/share/plymouth/themes/
 		cp ${WD}/files/splash.png /home/${H_USER}/images/Pictures/
 		rm -f /usr/share/plymouth/themes/pix/pix.script
 		cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
@@ -71,7 +71,6 @@ case $2 in
 		cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
 		rm kiosk.service
 		cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
-		systemctl start kiosk
 		systemctl enable kiosk
         usermod -a -G audio ${H_USER}
         usermod -a -G video ${H_USER}

@@ -68,32 +68,49 @@ EOF
 		#Set video preferences
 		rm -f /boot/config.txt
 		cp ${WD}/files/config.txt /boot/config.txt
-		#Set Splash
-		cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
-		cp ${WD}/files/splash.png /home/${H_USER}/images/Pictures/
-		rm -f /usr/share/plymouth/themes/pix/pix.script
-		cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
 		rm -f /boot/cmdline.txt
 		cp ${WD}/files/cmdline /boot/cmdline.txt
+		#Set Splash
+		if [ -d /usr/share/plymouth ]
+		then
+			cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
+			mkdir /home/${H_USER}/.kiosk 
+			rm -f /usr/share/plymouth/themes/pix/pix.script
+			cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
+		else	
+			echo "You need install PLYMOUTH to complete the instalation. Re-run as 'YOUR_USER_NAME install full' see 'help'"
+		fi
+		
 		#"No Desktop"
-		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/"
-		#Creating service to handle kiosk
-		cp ${WD}/files/kiosk.service ${WD}/kiosk.service
-		sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
-		sed -i "s/ARGS/\ /g" ${WD}/kiosk.service
-		sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
-		cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
-		rm kiosk.service
-		cp ${WD}/files/kiosk.sh /home/${H_USER}/kiosk.sh
-		systemctl start kiosk
-		systemctl enable kiosk
+		cp ${WD}/files/splash.png /home/${H_USER}/.kiosk
+		if [ -e  /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml ]
+		then 
+    		sed -i "s/true/false/g" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+    		sed -i "s/\/usr\/share\/images\/desktop\-base\/desktop\-background\/\/home\/${H_USER}\/Pictures\/" /home/${H_USER}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+		else
+			echo "Some steps of the installation will be applied after reboot..."
+		fi
 		#Forcing chromium
 		if [ ! -d /home/${H_USER}/.config/chromium/Default ]
 		then
 			mkdir /home/${H_USER}/.config/chromium/Default
 			touch /home/${H_USER}/.config/chromium/Default/Preferences
 		fi
+		#Creating service to handle kiosk
+		if [ ! -e /etc/systemd/system/kiosk.service ]
+		then
+			cp ${WD}/files/kiosk.service ${WD}/kiosk.service
+			sed -i "s/USER/${H_USER}/g" ${WD}/kiosk.service
+			sed -i "s/ARGS/\ /g" ${WD}/kiosk.service
+			sed -i "s/HOMEPAGE/${HOME_URL}/g" ${WD}/kiosk.service
+			cp ${WD}/kiosk.service /etc/systemd/system/kiosk.service
+			rm kiosk.service
+			cp ${WD}/files/kiosk.sh /home/${H_USER}/.kiosk/kiosk.sh
+			systemctl enable kiosk
+		else
+			echo "Kiosk service already installed, you need to reboot to start kiosk mode..."
+		fi
+		
 		
 	;;
 	uninstall)
