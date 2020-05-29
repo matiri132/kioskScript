@@ -71,10 +71,13 @@ EOF
 		rm -f /boot/cmdline.txt
 		cp ${WD}/files/cmdline /boot/cmdline.txt
 		#Set Splash
+		if [ ! -d /home/${H_USER}/.kiosk ]
+		then
+			mkdir /home/${H_USER}/.kiosk 
+		fi
 		if [ -d /usr/share/plymouth ]
 		then
 			cp ${WD}/files/splash.png /usr/share/plymouth/themes/pix
-			mkdir /home/${H_USER}/.kiosk 
 			rm -f /usr/share/plymouth/themes/pix/pix.script
 			cp ${WD}/files/plymouth /usr/share/plymouth/themes/pix/pix.script
 		else	
